@@ -756,6 +756,47 @@ DEFINE_EVENT(writeback_inode_template, sb_clear_inode_writeback,
 	TP_ARGS(inode)
 );
 
+DECLARE_EVENT_CLASS(page_flags_op,
+
+	TP_PROTO(struct page *page),
+
+	TP_ARGS(page),
+
+	TP_STRUCT__entry(
+		__field(unsigned long, pfn)
+		__field(unsigned long, i_ino)
+		__field(unsigned long, index)
+		__field(dev_t, s_dev)
+	),
+
+	TP_fast_assign(
+		__entry->pfn = page_to_pfn(page);
+		__entry->i_ino = page->mapping->host->i_ino;
+		__entry->index = page->index;
+		if (page->mapping->host->i_sb)
+			__entry->s_dev = page->mapping->host->i_sb->s_dev;
+		else
+			__entry->s_dev = page->mapping->host->i_rdev;
+	),
+
+	TP_printk("dev %d:%d ino %lx page=%p pfn=%lu ofs=%lu",
+		MAJOR(__entry->s_dev), MINOR(__entry->s_dev),
+		__entry->i_ino,
+		pfn_to_page(__entry->pfn),
+		__entry->pfn,
+		__entry->index << PAGE_SHIFT)
+);
+
+DEFINE_EVENT(page_flags_op, page_flags_set_dirty,
+	TP_PROTO(struct page *page),
+	TP_ARGS(page)
+);
+
+DEFINE_EVENT(page_flags_op, page_flags_clear_dirty,
+	TP_PROTO(struct page *page),
+	TP_ARGS(page)
+);
+
 #endif /* _TRACE_WRITEBACK_H */
 
 /* This part must be outside protection */

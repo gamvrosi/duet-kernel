@@ -267,8 +267,14 @@ PAGEFLAG(Error, error, PF_NO_COMPOUND) TESTCLEARFLAG(Error, error, PF_NO_COMPOUN
 PAGEFLAG(Referenced, referenced, PF_HEAD)
 	TESTCLEARFLAG(Referenced, referenced, PF_HEAD)
 	__SETPAGEFLAG(Referenced, referenced, PF_HEAD)
-PAGEFLAG(Dirty, dirty, PF_HEAD) TESTSCFLAG(Dirty, dirty, PF_HEAD)
-	__CLEARPAGEFLAG(Dirty, dirty, PF_HEAD)
+TESTPAGEFLAG(Dirty, dirty, PF_HEAD)
+
+extern void SetPageDirty(struct page *page);
+extern void __ClearPageDirty(struct page *page);
+extern void ClearPageDirty(struct page *page);
+extern int TestSetPageDirty(struct page *page);
+extern int TestClearPageDirty(struct page *page);
+
 PAGEFLAG(LRU, lru, PF_HEAD) __CLEARPAGEFLAG(LRU, lru, PF_HEAD)
 PAGEFLAG(Active, active, PF_HEAD) __CLEARPAGEFLAG(Active, active, PF_HEAD)
 	TESTCLEARFLAG(Active, active, PF_HEAD)

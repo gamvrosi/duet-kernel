@@ -2848,3 +2848,44 @@ void wait_for_stable_page(struct page *page)
 		wait_on_page_writeback(page);
 }
 EXPORT_SYMBOL_GPL(wait_for_stable_page);
+
+void SetPageDirty(struct page *page)
+{
+	if (!test_and_set_bit(PG_dirty, &page->flags))
+		trace_page_flags_set_dirty(page);
+}
+EXPORT_SYMBOL_GPL(SetPageDirty);
+
+void __ClearPageDirty(struct page *page)
+{
+	if (__test_and_clear_bit(PG_dirty, &page->flags))
+		trace_page_flags_clear_dirty(page);
+}
+EXPORT_SYMBOL_GPL(__ClearPageDirty);
+
+void ClearPageDirty(struct page *page)
+{
+	if (test_and_clear_bit(PG_dirty, &page->flags))
+		trace_page_flags_clear_dirty(page);
+}
+EXPORT_SYMBOL_GPL(ClearPageDirty);
+
+int TestSetPageDirty(struct page *page)
+{
+	if (!test_and_set_bit(PG_dirty, &page->flags)) {
+		trace_page_flags_set_dirty(page);
+		return 0;
+	}
+	return 1;
+}
+EXPORT_SYMBOL_GPL(TestSetPageDirty);
+
+int TestClearPageDirty(struct page *page)
+{
+	if (test_and_clear_bit(PG_dirty, &page->flags)) {
+		trace_page_flags_clear_dirty(page);
+		return 1;
+	}
+	return 0;
+}
+EXPORT_SYMBOL_GPL(TestClearPageDirty);
