@@ -23,9 +23,12 @@
 #include <linux/module.h>
 #include <linux/mount.h>
 #include <linux/srcu.h>
+#include <atomic.h>
 
 #include <linux/fsnotify_backend.h>
 #include "fsnotify.h"
+
+atomic_t r_utime;
 
 /*
  * Clear all of the marks on an inode when it is being evicted from core
